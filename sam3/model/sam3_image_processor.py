@@ -47,7 +47,7 @@ class Sam3Processor:
         if isinstance(image, PIL.Image.Image):
             width, height = image.size
         elif isinstance(image, (torch.Tensor, np.ndarray)):
-            height, width = image.shape[-2:]
+            height, width = image.shape[:2]
         else:
             raise ValueError("Image must be a PIL image or a tensor")
 

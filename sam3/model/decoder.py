@@ -31,6 +31,7 @@ from .model_misc import (
 class TransformerDecoderLayer(nn.Module):
     def __init__(
         self,
+        device,
         activation: str,
         d_model: int,
         dim_feedforward: int,
@@ -40,6 +41,7 @@ class TransformerDecoderLayer(nn.Module):
         use_text_cross_attention: bool = False,
     ):
         super().__init__()
+        self.device = device
 
         # cross attention
         self.cross_attn = cross_attention
@@ -71,7 +73,7 @@ class TransformerDecoderLayer(nn.Module):
         return tensor if pos is None else tensor + pos
 
     def forward_ffn(self, tgt):
-        with torch.amp.autocast(device_type="cuda", enabled=False):
+        with torch.amp.autocast(device_type=self.device, enabled=False):
             tgt2 = self.linear2(self.dropout3(self.activation(self.linear1(tgt))))
         tgt = tgt + self.dropout4(tgt2)
         tgt = self.norm3(tgt)
