@@ -150,7 +150,7 @@ def _create_transformer_encoder() -> TransformerEncoderFusion:
     return encoder
 
 
-def _create_transformer_decoder() -> TransformerDecoder:
+def _create_transformer_decoder(device) -> TransformerDecoder:
     """Create transformer decoder with its layer."""
     decoder_layer = TransformerDecoderLayer(
         activation="relu",
@@ -170,6 +170,7 @@ def _create_transformer_decoder() -> TransformerDecoder:
         layer=decoder_layer,
         num_layers=6,
         num_queries=200,
+        device=device,
         return_intermediate=True,
         box_refine=True,
         num_o2m_queries=0,
@@ -512,10 +513,10 @@ def _create_vision_backbone(
     return vit_neck
 
 
-def _create_sam3_transformer(has_presence_token: bool = True) -> TransformerWrapper:
+def _create_sam3_transformer(device) -> TransformerWrapper:
     """Create SAM3 transformer encoder and decoder."""
     encoder: TransformerEncoderFusion = _create_transformer_encoder()
-    decoder: TransformerDecoder = _create_transformer_decoder()
+    decoder: TransformerDecoder = _create_transformer_decoder(device=device)
 
     return TransformerWrapper(encoder=encoder, decoder=decoder, d_model=256)
 
@@ -556,7 +557,7 @@ def _setup_device_and_mode(model, device, eval_mode):
 
 def build_sam3_image_model(
     bpe_path=None,
-    device="cuda" if torch.cuda.is_available() else "cpu",
+    device="cpu",
     eval_mode=True,
     checkpoint_path=None,
     load_from_HF=True,
@@ -596,7 +597,7 @@ def build_sam3_image_model(
     backbone = _create_vl_backbone(vision_encoder, text_encoder)
 
     # Create transformer components
-    transformer = _create_sam3_transformer()
+    transformer = _create_sam3_transformer(device=device)
 
     # Create dot product scoring
     dot_prod_scoring = _create_dot_product_scoring()
@@ -647,14 +648,13 @@ def download_ckpt_from_hf():
 
 
 def build_sam3_video_model(
+    device,
     checkpoint_path: Optional[str] = None,
     load_from_HF=True,
     bpe_path: Optional[str] = None,
     has_presence_token: bool = True,
-    geo_encoder_use_img_cross_attn: bool = True,
     strict_state_dict_loading: bool = True,
     apply_temporal_disambiguation: bool = True,
-    device="cuda" if torch.cuda.is_available() else "cpu",
     compile=False,
 ) -> Sam3VideoInferenceWithInstanceInteractivity:
     """
@@ -679,7 +679,7 @@ def build_sam3_video_model(
     visual_neck = _create_vision_backbone()
     text_encoder = _create_text_encoder(bpe_path)
     backbone = SAM3VLBackbone(scalp=1, visual=visual_neck, text=text_encoder)
-    transformer = _create_sam3_transformer(has_presence_token=has_presence_token)
+    transformer = _create_sam3_transformer(device=device)
     segmentation_head: UniversalSegmentationHead = _create_segmentation_head()
     input_geometry_encoder = _create_geometry_encoder()
 

@@ -8,10 +8,8 @@ dynamic = ["version"]
 description = "SAM3 (Segment Anything Model 3) implementation"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {file = "LICENSE"}
-authors = [
-    {name = "Meta AI Research"}
-]
+license = { file = "LICENSE" }
+authors = [{ name = "Meta AI Research" }]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
@@ -46,7 +44,6 @@ dev = [
     "gitpython==3.1.31",
     "yt-dlp",
     "pandas",
-    "opencv-python",
     "pycocotools",
     "numba",
     "python-rapidjson",
@@ -59,8 +56,6 @@ notebooks = [
     "ipycanvas",
     "ipympl",
     "pycocotools",
-    "decord",
-    "opencv-python",
     "einops",
     "scikit-image",
     "scikit-learn",
@@ -76,6 +71,7 @@ train = [
     "fairscale",
     "scikit-image",
     "scikit-learn",
+    "decord",
 ]
 
 [project.urls]
@@ -86,7 +82,7 @@ train = [
 packages = ["sam3", "sam3.model"]
 
 [tool.setuptools.dynamic]
-version = {attr = "sam3.__version__"}
+version = { attr = "sam3.__version__" }
 
 [tool.black]
 line-length = 88

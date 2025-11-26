@@ -14,8 +14,8 @@ class DummyLoss(torch.nn.Module):
 
     def __init__(
         self,
+        device,
         core_loss_key: str = CORE_LOSS_KEY,
-        device: str = "cuda",
         **kwargs,
     ):
         super().__init__()

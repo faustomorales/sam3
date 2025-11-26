@@ -96,11 +96,11 @@ class AsyncVideoFrameLoader:
 def load_video_frames(
     video_path,
     image_size,
+    compute_device,
     offload_video_to_cpu,
     img_mean=(0.5, 0.5, 0.5),
     img_std=(0.5, 0.5, 0.5),
     async_loading_frames=False,
-    compute_device=torch.device("cuda"),
 ):
     """
     Load the video frames from video_path. The frames are resized to image_size as in
